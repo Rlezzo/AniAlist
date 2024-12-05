@@ -1,20 +1,19 @@
 #alist_service.py
 #和alist的相关交互操作
 from typing import List
-from flask import current_app
-from backend.services.alist_api.task_constants import TaskType, DeletePolicy, ExecutionState
-from backend.services.alist_api.alist_task_manager import AlistTaskManager
-from backend.services.alist_api.directory_manager import DirectoryManager
+from backend.core import config
 from backend.services import rss_service
 from backend.database.models import Magnet
+from backend.services.alist_api import AlistTaskManager, DirectoryManager
+from backend.services.alist_api.task_constants import TaskType, DeletePolicy, ExecutionState
 
 class AlistService:
     def __init__(self, task_manager: AlistTaskManager, directory_manager: DirectoryManager, delete_policy: DeletePolicy = None, root_save_path: str = None):
         self.task_manager = task_manager
         self.directory_manager = directory_manager
         # 如果未传入 delete_policy，默认从 Flask 配置中获取
-        self.delete_policy = delete_policy or DeletePolicy(current_app.config.get('DELETE_POLICY', DeletePolicy.DELETE_ALWAYS))
-        self.root_save_path = root_save_path or current_app.config.get('ROOT_SAVE_PATH', '/yidong/bangumi')
+        self.delete_policy = delete_policy or config.delete_policy
+        self.root_save_path = root_save_path or config.root_save_path
 
     async def cancel_all_tasks(self, task_type: TaskType, task_state: ExecutionState = ExecutionState.UNDONE):
         """取消所有完成/未完成的下载任务"""
@@ -25,7 +24,7 @@ class AlistService:
             # 遍历取消所有符合条件的任务
             for task in tasks_to_cancel:
                 await self.task_manager.cancel_task(task.tid, task_type)
-                print(f"{'下载' if task_type == TaskType.DOWNLOAD else '上传'} 任务 {task.id} 已成功取消。")
+                print(f"{'下载' if task_type == TaskType.DOWNLOAD else '上传'} 任务 {task.tid} 已成功取消。")
         except Exception as e:
             print(f"取消所有任务时出现错误: {e}")
 

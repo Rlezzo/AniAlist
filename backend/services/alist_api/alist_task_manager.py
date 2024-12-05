@@ -1,9 +1,8 @@
 # offline_download.py
 from typing import List
-from .task_constants import TaskType, DeletePolicy, DownloaderType
-from .alist_client import AlistClient
 from dataclasses import dataclass
-from .alist_task import AlistTask
+from . import AlistClient, AlistTask
+from .task_constants import TaskType, DeletePolicy, DownloaderType, ExecutionState
 
 @dataclass
 class AlistTaskManager:
@@ -45,7 +44,7 @@ class AlistTaskManager:
         except Exception as e:
             print(f"清除已完成任务时出现错误: {e}")
 
-    async def list_tasks(self, task_type: TaskType, status: str = "undone") -> List[AlistTask]:
+    async def list_tasks(self, task_type: TaskType, status: ExecutionState=ExecutionState.UNDONE) -> List[AlistTask]:
         """列出指定类型和状态的任务"""
         try:
             response = await self.client.list_tasks(task_type, status)

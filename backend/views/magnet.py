@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 from sqlalchemy.exc import SQLAlchemyError
-from anime2.backend.services import magnet_service
+from backend.services import magnet_service
 from backend.database.models import Magnet
 
 magnet_blueprint = Blueprint('magnet', __name__)
@@ -142,7 +142,7 @@ async def start_magnet_queue():
     # 逐个处理队列中的任务
     try:
         # 如果没有正在进行的任务，尝试处理任务
-        if not magnet_queue_manager.self.current_magnet:
+        if not magnet_queue_manager.current_magnet:
             await magnet_queue_manager.process_magnet_queue()
         return jsonify({"message": "所有任务已处理完毕"}), 200
     except Exception as e:

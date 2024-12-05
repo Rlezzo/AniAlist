@@ -1,8 +1,9 @@
 # magnet_service.py
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
-from backend.database.database import async_session
+
 from backend.database.models import Magnet
+from backend.database.database import async_session
 
 async def get_all_magnets():
     async with async_session() as session:

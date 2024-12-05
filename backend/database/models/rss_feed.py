@@ -12,4 +12,4 @@ class RSSFeed(Base):
     last_updated = Column(DateTime, nullable=False)
     should_update = Column(Boolean, default=True)
 
-    tasks = relationship('Magnet', back_populates='rss_feed')
+    magnets = relationship('Magnet', back_populates='rss_feed')

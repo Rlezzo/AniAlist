@@ -1,27 +1,30 @@
 # magnet_monitor.py
 import asyncio
 from typing import Optional
-from backend.services.alist_api.alist_task_manager import AlistTaskManager
-from backend.database.models import Magnet
 from datetime import datetime, timedelta
-from backend.services.alist_api.task_constants import TaskStatus, TaskType
+
+from backend.database.models import Magnet
 from backend.services import magnet_service
-from backend.until.signals import magnet_pushed_signal, magnet_completed_signal
+from backend.services.alist_api import AlistTaskManager
+from backend.services.alist_api.task_constants import TaskStatus, TaskType, ExecutionState
+from backend.core.config import over_time, interval_time
 
 class MagnetMonitor:
     def __init__(self, task_manager: AlistTaskManager):
         self.monitored_magnet: Optional[Magnet] = None
         self.start_time: Optional[datetime] = None
-        self.timeout: timedelta = timedelta(minutes=60)  # 超时时间
+        self.timeout: timedelta = timedelta(minutes=over_time)  # 超时时间
         self.task_manager = task_manager
-        magnet_pushed_signal.connect(self.start_monitoring)
+        self.queue_manager = None  # 队列管理器实例，延迟注入
 
-    async def start_monitoring(self, **kwargs):
+    def set_queue_manager(self, queue_manager):
+        """设置队列管理器实例"""
+        self.queue_manager = queue_manager
+
+    async def start_monitoring(self, magnet: Magnet):
         """
         开始监控一个任务。
         """
-        # 从信号中提取 magnet 对象
-        magnet: Magnet = kwargs.get('magnet')
         if magnet:
             self.monitored_magnet = magnet
             self.start_time = datetime.now()
@@ -38,14 +41,14 @@ class MagnetMonitor:
         self.monitored_magnet = None
         self.start_time = None
         # 通知queue_manager开始下一个任务
-        magnet_completed_signal.send()
+        await self.queue_manager.process_magnet_queue()
 
     async def monitor_magnet(self):
         """
         定期检查被监控任务的状态。
         """
         while True:
-            await asyncio.sleep(5)  # 每5秒检查一次
+            await asyncio.sleep(interval_time)  # 每X秒检查一次
 
             if not self.monitored_magnet:
                 print("没有任务需要监控。")
@@ -86,8 +89,8 @@ class MagnetMonitor:
             return False
 
         try:
-            download_tasks = await self.task_manager.list_tasks(task_type=TaskType.DOWNLOAD, status="done")
-            transfer_tasks = await self.task_manager.list_tasks(task_type=TaskType.TRANSFER, status="done")
+            download_tasks = await self.task_manager.list_tasks(task_type=TaskType.DOWNLOAD, status=ExecutionState.DONE)
+            transfer_tasks = await self.task_manager.list_tasks(task_type=TaskType.TRANSFER, status=ExecutionState.DONE)
 
             # 都有成功记录的时候再检查，理论上应该是一个下载成功，一个上传成功
             if download_tasks and transfer_tasks: 

@@ -1,6 +1,6 @@
-from dataclasses import dataclass
-from .alist_client import AlistClient
 import aiohttp
+from . import AlistClient
+from dataclasses import dataclass
 
 @dataclass
 class DirectoryManager:

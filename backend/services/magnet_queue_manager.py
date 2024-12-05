@@ -1,17 +1,21 @@
 # task_queue_manager.py
+
+from . import AlistService
 from typing import List, Optional
 from backend.database.models import Magnet
-from .alist_service import AlistService
-from backend.until.unique_magnet_queue import UniqueMagnetQueue as UMQueue
-from .signals import magnet_pushed_signal, magnet_completed_signal
+from backend.utils.unique_magnet_queue import UniqueMagnetQueue as UMQueue
 
 class MagnetQueueManager:
     def __init__(self, alist_service: AlistService):
         self.download_queue = UMQueue()  # 下载任务队列
         self.suspended_queue = UMQueue()  # 被挂起的任务队列
         self.current_magnet: Optional[Magnet] = None  # 当前正在执行的 magnet
-        self.alist_service = AlistService(alist_service)
-        magnet_completed_signal.connect(self.process_magnet_queue)
+        self.alist_service = alist_service
+        self.monitor = None  # 监控器实例，延迟注入
+
+    def set_monitor(self, monitor):
+        """设置监控器实例"""
+        self.monitor = monitor
 
     async def add_magnets_to_queue(self, magnets: List[Magnet]):
         """
@@ -34,9 +38,14 @@ class MagnetQueueManager:
         监控模块监控完一个磁链后调用他，推送下一个新磁链（默认self.current_magnet应该为空）
         """
         # 监控结束后，先清除当前magnet和alist任务信息
+        import datetime
+        print(f"进入队列处理，当前时间: {datetime.datetime.now()}，当前任务: {self.current_magnet.name if self.current_magnet else ''}")
+
         if self.current_magnet:
             self.current_magnet = None
             await self.alist_service.reset_all_offline_tasks()
+
+        print(f"进入队列处理检查，当前时间: {datetime.datetime.now()}，当前任务: {self.current_magnet.name if self.current_magnet else ''}")
 
         # 处理挂起队列的任务
         if not self.suspended_queue.empty():
@@ -50,6 +59,8 @@ class MagnetQueueManager:
             self.current_magnet = await self.download_queue.get()
             print(f"开始处理任务: {self.current_magnet.name}")
             await self.push_magnet_to_task(self.current_magnet)
+
+        print(f"结束队列处理，当前时间: {datetime.datetime.now()}，当前任务: {self.current_magnet.name if self.current_magnet else ''}")
 
     async def interrupt_and_retry_task(self, magnet: Magnet):
         """
@@ -84,7 +95,7 @@ class MagnetQueueManager:
             )
             print(f"任务 {magnet.name} 推送成功")
             # 通知monitor开始监控
-            magnet_pushed_signal.send(magnet=magnet)
+            await self.monitor.start_monitoring(magnet)
         except Exception as e:
             print(f"执行任务时出错: {e}")
 

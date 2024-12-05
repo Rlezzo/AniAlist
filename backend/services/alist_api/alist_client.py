@@ -2,7 +2,7 @@
 import aiohttp
 import urllib.parse
 from dataclasses import dataclass
-from .task_constants import TaskType
+from .task_constants import TaskType, ExecutionState
 
 @dataclass
 class AlistClient:
@@ -57,20 +57,9 @@ class AlistClient:
         data = await self.get("/api/public/settings")
         return data.get("version", "unknown").lstrip("v")
 
-    async def list_tasks(self, task_type: TaskType, status: str = "undone"):
+    async def list_tasks(self, task_type: TaskType, status: ExecutionState = ExecutionState.UNDONE):
         """调用 Alist 的 API 来列出指定类型和状态的任务"""
-        if status not in ["done", "undone"]:
-            raise ValueError("status 必须是 'done' 或 'undone'")
-
-        endpoint = f"/api/admin/task/{task_type.value}/{status}"
-        return await self.get(endpoint)
-        
-    async def list_tasks(self, task_type: TaskType, status: str = "undone"):
-        """调用 Alist 的 API 来列出任务"""
-        if status not in ["done", "undone"]:
-            raise ValueError("status 必须是 'done' 或 'undone'")
-
-        endpoint = f"/api/admin/task/{task_type.value}/{status}"
+        endpoint = f"/api/admin/task/{task_type.value}/{status.value}"
         return await self.get(endpoint)
     
     async def add_offline_download_task(self, save_path: str, urls: list, delete_policy: str, downloader_tool: str):
@@ -93,3 +82,33 @@ class AlistClient:
         """封装清除已完成任务的 API 请求"""
         endpoint = f"/api/admin/task/{task_type.value}/clear_done"
         await self.post(endpoint)
+
+    async def check_path_exists(self, path: str) -> bool:
+        """封装检查路径是否存在的 API 请求"""
+        endpoint = "/api/fs/dirs"
+        body = {"path": path, "password": "", "force_root": False}
+        await self.post(endpoint, json=body)
+
+    async def create_directory(self, path: str) -> bool:
+        """封装创建目录的 API 请求"""
+        endpoint = "/api/fs/mkdir"
+        body = {"path": path}
+        await self.post(endpoint, json=body)
+
+    async def rename_directory(self, current_path: str, new_name: str) -> bool:
+        """封装重命名目录的 API 请求"""
+        endpoint = "/api/fs/rename"
+        body = {
+            "name": new_name,
+            "path": current_path
+        }
+        await self.post(endpoint, json=body)
+
+    async def delete_directory(self, dir_path: str, names: list) -> bool:
+        """封装删除目录内容的 API 请求"""
+        endpoint = "/api/fs/remove"
+        body = {
+            "dir": dir_path,
+            "names": names
+        }
+        await self.post(endpoint, json=body)
