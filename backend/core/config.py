@@ -7,5 +7,10 @@ delete_policy = DeletePolicy.DELETE_ALWAYS
 over_time = 90 # 任务超时时间，分钟
 interval_time = 10 # 监视任务完成间隔，秒
 
-# 配置数据库连接，使用异步 SQLite
-DATABASE_URL = "sqlite+aiosqlite:///backend/database/rss_magnet.db"
+SECRET_KEY = 'your_super_secret_key'
+
+BLOCKED_WORDS = [
+    "全集",
+    "合集"
+    # 添加更多屏蔽词...
+]

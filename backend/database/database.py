@@ -1,6 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
-from backend.core.config import DATABASE_URL
+
+# 配置数据库连接，使用异步 SQLite
+DATABASE_URL = "sqlite+aiosqlite:///backend/database/rss_magnet.db"
 
 # 创建异步引擎
 engine = create_async_engine(

@@ -1,8 +1,8 @@
 # task_queue_manager.py
 
-from . import AlistService
 from typing import List, Optional
 from backend.database.models import Magnet
+from backend.services import AlistService
 from backend.utils.unique_magnet_queue import UniqueMagnetQueue as UMQueue
 
 class MagnetQueueManager:

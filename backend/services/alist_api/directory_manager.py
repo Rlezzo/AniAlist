@@ -1,5 +1,5 @@
 import aiohttp
-from . import AlistClient
+from .alist_client import AlistClient
 from dataclasses import dataclass
 
 @dataclass

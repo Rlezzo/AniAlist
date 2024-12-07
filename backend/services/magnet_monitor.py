@@ -4,7 +4,7 @@ from typing import Optional
 from datetime import datetime, timedelta
 
 from backend.database.models import Magnet
-from backend.services import magnet_service
+from .magnet_service import update_magnet
 from backend.services.alist_api import AlistTaskManager
 from backend.services.alist_api.task_constants import TaskStatus, TaskType, ExecutionState
 from backend.core.config import over_time, interval_time
@@ -76,7 +76,7 @@ class MagnetMonitor:
 
         try:
             # 更新数据库中的任务状态
-            await magnet_service.update_magnet(self.monitored_magnet.id, {"status": True})
+            await update_magnet(self.monitored_magnet.id, {"status": True})
             print(f"任务 {self.monitored_magnet.name} 已标记为完成")
         except Exception as e:
             print(f"标记任务为完成时发生错误: {e}")

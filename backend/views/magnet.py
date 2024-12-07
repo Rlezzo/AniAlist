@@ -75,27 +75,23 @@ async def delete_magnet(magnet_id):
         return jsonify({"error": str(e)}), 500
 
 # 重试
-@magnet_blueprint.route('/magnets/retry', methods=['POST'])
-async def retry_magnet():
+@magnet_blueprint.route('/magnets/<int:magnet_id>/retry', methods=['POST'])
+async def retry_magnet(magnet_id):
     """
     重试下载任务，直接接受一个任务对象。
     """
-    data = request.json
-    magnet_data = data.get('magnet')
+    try:
+        magnet = await magnet_service.get_magnet_by_id(magnet_id)
+        if not magnet:
+            return jsonify({"error": f"Magnet with id {magnet_id} not found"}), 404
 
-    if not magnet_data:
-        return jsonify({"error": "Invalid request data, magnet is required"}), 400
-
-    # 创建 magnet 对象
-    magnet = Magnet(
-        rss_feed_id=magnet_data.get('rss_feed_id'),
-        title=magnet_data.get('title'),
-        magnet_link=magnet_data.get('magnet_link'),
-        name=magnet_data.get('name', magnet_data.get('title')),
-        status=magnet_data.get('status', False)
-    )
-
-    # 调用 execute_magnet 方法执行任务
+        update_success = await magnet_service.update_magnet(magnet_id, {'status': False})
+        if not update_success:
+            return jsonify({"error": "Failed to update magnet status"}), 500
+        
+    except SQLAlchemyError as e:
+        return jsonify({"error": f"Database error: {str(e)}"}), 500
+    # 上面改成接受id，然后顺便把status改成未完成
     magnet_queue_manager = current_app.config['MAGNET_QUEUE_MANAGER']
     try:
         await magnet_queue_manager.interrupt_and_retry_task(magnet)

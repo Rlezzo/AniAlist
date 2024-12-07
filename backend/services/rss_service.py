@@ -3,10 +3,10 @@ from datetime import datetime
 from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 
-from . import magnet_service
 from backend.utils import rss_parser
 from backend.database.models import RSSFeed, Magnet
 from backend.database.database import async_session
+from .magnet_service import save_magnets_to_db
 
 # 查找
 async def get_all_rss_feeds():
@@ -156,7 +156,7 @@ async def refresh_all_rss_feeds():
     torrents = await rss_parser.parse_multiple_rss(feed_urls_with_ids)
 
     # 将新的磁力链接保存到数据库
-    await magnet_service.save_magnets_to_db(torrents)
+    await save_magnets_to_db(torrents)
 
     # 更新所有 RSS 源的 `last_updated` 字段
     for rss_feed in rss_feeds:
@@ -176,7 +176,7 @@ async def refresh_rss_feed(rss_id):
     torrents = await rss_parser.parse_rss_feed(rss_feed.url, rss_feed.id)
 
     # 将新的磁力链接保存到数据库
-    await magnet_service.save_magnets_to_db(torrents)
+    await save_magnets_to_db(torrents)
 
     # 更新 RSS 源的 `last_updated` 字段
     await update_rss_feed(rss_id, {"last_updated": datetime.now()})

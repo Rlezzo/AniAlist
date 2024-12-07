@@ -1,6 +1,7 @@
 import aiohttp
 import feedparser
 import asyncio
+from backend.core.config import BLOCKED_WORDS
 
 # 设置代理
 PROXIES = {
@@ -27,6 +28,18 @@ async def parse_rss_feed(feed_url, rss_feed_id, proxy=None):
                 for entry in feed.entries:
                     title = entry.title
                     magnet_link = None
+
+                    # 检查标题是否包含任何屏蔽词（不区分大小写）
+                    title_lower = title.lower()
+                    blocked = False
+                    for word in BLOCKED_WORDS:
+                        if word.lower() in title_lower:
+                            blocked = True
+                            print(f"{entry}条目 '{title}' 包含屏蔽词 '{word}'，跳过。")
+                            break
+                    if blocked:
+                        continue  # 跳过包含屏蔽词的条目
+
                     for link in entry.get('links', []):
                         if link.get('rel') == "enclosure" and link.get('type') == "application/x-bittorrent":
                             magnet_link = link.get('href')

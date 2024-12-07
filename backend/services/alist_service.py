@@ -2,7 +2,7 @@
 #和alist的相关交互操作
 from typing import List
 from backend.core import config
-from backend.services import rss_service
+from .rss_service import get_rss_feed_by_id
 from backend.database.models import Magnet
 from backend.services.alist_api import AlistTaskManager, DirectoryManager
 from backend.services.alist_api.task_constants import TaskType, DeletePolicy, ExecutionState
@@ -54,7 +54,7 @@ class AlistService:
 
     async def get_task_save_path(self, magnet: Magnet) -> str:
         # 1. 获取 task 对应 rss 的 name
-        rss = await rss_service.get_rss_feed_by_id(magnet.rss_feed_id)
+        rss = await get_rss_feed_by_id(magnet.rss_feed_id)
         if not rss:
             raise ValueError(f"RSS Feed with id {magnet.rss_feed_id} not found")
 

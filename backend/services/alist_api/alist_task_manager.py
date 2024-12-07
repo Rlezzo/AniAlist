@@ -1,8 +1,10 @@
 # offline_download.py
 from typing import List
 from dataclasses import dataclass
-from . import AlistClient, AlistTask
+from .alist_client import AlistClient
+from .alist_task import AlistTask
 from .task_constants import TaskType, DeletePolicy, DownloaderType, ExecutionState
+from loguru import logger
 
 @dataclass
 class AlistTaskManager:
@@ -22,11 +24,11 @@ class AlistTaskManager:
             # 从响应中提取任务 ID
             if response and 'tasks' in response and isinstance(response['tasks'], list):
                 task_ids = [task['id'] for task in response['tasks']]
-                print("下载任务添加成功，任务ID：", ", ".join(task_ids))
+                logger.info("下载任务添加成功，任务ID：", ", ".join(task_ids))
             else:
-                print("下载任务添加失败，未返回有效的任务ID")
+                logger.debug("下载任务添加失败，未返回有效的任务ID")
         except Exception as e:
-            print(f"添加下载任务时出现错误: {e}")
+            logger.error(f"添加下载任务时出现错误: {e}")
         
     async def cancel_task(self, task_id: str, task_type: TaskType):
         """取消特定任务, 指取消进行中的下载上传任务"""

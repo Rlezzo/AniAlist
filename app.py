@@ -10,8 +10,9 @@ from backend.services import rss_service, magnet_service, MagnetQueueManager, Ma
 from backend.services.alist_api import AlistClient, AlistTaskManager, DirectoryManager
 
 from backend.core.config import base_url, token
-from backend.views import rss_blueprint, magnet_blueprint
+from backend.views import rss_blueprint, magnet_blueprint, log_blueprint, auth_blueprint
 from backend.utils.dependency_manager import DependencyManager
+from backend.utils.token_required_middleware import token_required_middleware
 # from backend.utils.file_lock import FileLock
 
 def create_app():
@@ -42,7 +43,7 @@ def create_app():
     app.config['MAGNET_QUEUE_MANAGER'] = magnet_queue_manager
     app.config['MAGNET_MONITOR'] = magnet_monitor
 
-    CORS(app)
+    CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 
     async def init_models():
         """异步初始化数据库模型"""
@@ -51,9 +52,14 @@ def create_app():
     # 初始化数据库
     asyncio.run(init_models())
 
+    # 应用中间件
+    token_required_middleware([rss_blueprint, magnet_blueprint, log_blueprint])
+
     # 注册蓝图
     app.register_blueprint(rss_blueprint, url_prefix='/api')
     app.register_blueprint(magnet_blueprint, url_prefix='/api')
+    app.register_blueprint(log_blueprint, url_prefix='/api')
+    app.register_blueprint(auth_blueprint, url_prefix='/api')
 
     # 重载app.run(debug=True, use_reloader=True)模式下会有多次运行的情况
     # 创建文件锁实例
