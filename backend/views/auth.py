@@ -1,31 +1,12 @@
-from flask import Blueprint, request, jsonify
-import bcrypt
 import jwt
+import bcrypt
+from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta, timezone
-from backend.core.config import SECRET_KEY
-from loguru import logger
+from backend.core.config import SECRET_KEY, REFRESH_WINDOW, users
+from backend.utils.logging_config import loguru_logger as logger
 
 # 创建蓝图实例
 auth_blueprint = Blueprint('auth', __name__)
-
-REFRESH_WINDOW = timedelta(minutes=10)  # 刷新窗口为 10 分钟
-
-# 示例用户存储
-users = {
-    "admin": b"$2b$12$QEYV2GWRV8EsOuZEJ0vgs.cLpiFwsQR8wN3APqQ2klrcdFTeS0xHm"
-}
-
-# 移除默认的 Loguru 处理器
-logger.remove()
-
-# 添加 login.log 处理器，仅处理包含 'username' 和 'ip_address' 的日志
-logger.add(
-    "logs/login/login.log",
-    format="{time} | 用户: {extra[username]} | IP 地址: {extra[ip_address]}",
-    rotation="1 MB",
-    filter=lambda record: "username" in record["extra"] and "ip_address" in record["extra"],
-    level="INFO"
-)
 
 @auth_blueprint.route('/auth/login', methods=['POST'])
 def login():
@@ -45,7 +26,6 @@ def login():
 
     # 生成 JWT Token
     token = generate_token(username)
-    print(f"Generated Token: {token}")
 
     ip_address = request.remote_addr  # 获取 IP 地址
     

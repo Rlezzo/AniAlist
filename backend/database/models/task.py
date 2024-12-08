@@ -1,8 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
-from datetime import datetime
 import hashlib
-from . import Base  # 从 models 导入 Base
+from . import Base
+from datetime import datetime
+from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 
 class Magnet(Base):
     __tablename__ = 'magnets'

@@ -4,9 +4,10 @@ from sqlalchemy.future import select
 from sqlalchemy.exc import SQLAlchemyError
 
 from backend.utils import rss_parser
+from .magnet_service import save_magnets_to_db
 from backend.database.models import RSSFeed, Magnet
 from backend.database.database import async_session
-from .magnet_service import save_magnets_to_db
+from backend.utils.logging_config import loguru_logger as logger
 
 # 查找
 async def get_all_rss_feeds():
@@ -19,7 +20,7 @@ async def get_all_rss_feeds():
             feeds = result.scalars().all()
             return feeds
         except SQLAlchemyError as e:
-            print(f"Database error: {e}")
+            logger.error(f"Database error: {e}")
             return None
 
 async def get_rss_feed_by_id(rss_id):
@@ -32,7 +33,7 @@ async def get_rss_feed_by_id(rss_id):
             feed = result.scalars().first()
             return feed
         except SQLAlchemyError as e:
-            print(f"Database error: {e}")
+            logger.error(f"Database error: {e}")
             return None
 
 # 增加
@@ -51,7 +52,7 @@ async def create_rss_feed(name, url):
             await session.commit()
             return new_feed
         except SQLAlchemyError as e:
-            print(f"Database error: {e}")
+            logger.error(f"Database error: {e}")
             await session.rollback()
             return None
 
@@ -103,7 +104,7 @@ async def patch_rss_feed(rss_id, update_data):
             return True
         except SQLAlchemyError as e:
             await session.rollback()  # 回滚更改以防止不一致
-            print(f"Database error: {e}")
+            logger.error(f"Database error: {e}")
             return False
         
 # 删除

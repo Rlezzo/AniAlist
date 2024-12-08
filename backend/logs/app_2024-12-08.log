@@ -1,0 +1,40 @@
+2024-12-08 14:18:09 | INFO | auth.py:login:34 - 登录成功
+2024-12-08 14:18:16 | INFO | alist_task_manager.py:add_download_task:28 - 下载任务添加成功，任务ID：
+2024-12-08 19:49:12 | DEBUG | dependency_manager.py:inject_dependencies:30 - 向 AlistTaskManager 注入 AlistClient
+2024-12-08 19:52:27 | DEBUG | dependency_manager.py:inject_dependencies:30 - 向 AlistTaskManager 注入 AlistClient
+2024-12-08 20:02:29 | DEBUG | alist_service.py:set_dependencies:24 - AlistService 成功设置依赖 task_manager
+2024-12-08 20:02:29 | DEBUG | alist_service.py:set_dependencies:24 - AlistService 成功设置依赖 directory_manager
+2024-12-08 20:02:29 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 alist_service
+2024-12-08 20:02:29 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 monitor
+2024-12-08 20:02:29 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 task_manager
+2024-12-08 20:02:29 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 queue_manager
+2024-12-08 20:02:30 | DEBUG | alist_service.py:set_dependencies:24 - AlistService 成功设置依赖 task_manager
+2024-12-08 20:02:30 | DEBUG | alist_service.py:set_dependencies:24 - AlistService 成功设置依赖 directory_manager
+2024-12-08 20:02:30 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 alist_service
+2024-12-08 20:02:30 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 monitor
+2024-12-08 20:02:30 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 task_manager
+2024-12-08 20:02:30 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 queue_manager
+2024-12-08 20:03:23 | DEBUG | alist_service.py:set_dependencies:24 - AlistService 成功设置依赖 task_manager
+2024-12-08 20:03:23 | DEBUG | alist_service.py:set_dependencies:24 - AlistService 成功设置依赖 directory_manager
+2024-12-08 20:03:23 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 alist_service
+2024-12-08 20:03:23 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 monitor
+2024-12-08 20:03:23 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 task_manager
+2024-12-08 20:03:23 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 queue_manager
+2024-12-08 20:03:24 | DEBUG | alist_service.py:set_dependencies:24 - AlistService 成功设置依赖 task_manager
+2024-12-08 20:03:24 | DEBUG | alist_service.py:set_dependencies:24 - AlistService 成功设置依赖 directory_manager
+2024-12-08 20:03:24 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 alist_service
+2024-12-08 20:03:24 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 monitor
+2024-12-08 20:03:24 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 task_manager
+2024-12-08 20:03:24 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 queue_manager
+2024-12-08 20:20:10 | DEBUG | alist_service.py:set_dependencies:22 - AlistService 成功设置依赖 task_manager
+2024-12-08 20:20:10 | DEBUG | alist_service.py:set_dependencies:22 - AlistService 成功设置依赖 directory_manager
+2024-12-08 20:20:10 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 alist_service
+2024-12-08 20:20:10 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 monitor
+2024-12-08 20:20:10 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 task_manager
+2024-12-08 20:20:10 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 queue_manager
+2024-12-08 20:20:10 | DEBUG | alist_service.py:set_dependencies:22 - AlistService 成功设置依赖 task_manager
+2024-12-08 20:20:10 | DEBUG | alist_service.py:set_dependencies:22 - AlistService 成功设置依赖 directory_manager
+2024-12-08 20:20:10 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 alist_service
+2024-12-08 20:20:10 | DEBUG | magnet_queue_manager.py:set_dependencies:21 - MagnetQueueManager 成功设置依赖 monitor
+2024-12-08 20:20:10 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 task_manager
+2024-12-08 20:20:10 | DEBUG | magnet_monitor.py:set_dependencies:26 - MagnetMonitor 成功设置依赖 queue_manager

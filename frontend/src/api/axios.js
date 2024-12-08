@@ -145,5 +145,68 @@ export const getLoginLogs = () => {
   return apiClient.get('/login_logs');
 };
 
+
 // 导出 axios 实例以供组件直接使用
 export default apiClient;
+
+
+// // 创建 axios.js 作为封装所有 API 请求的模块
+// import axios from 'axios';
+
+// // 创建一个 axios 实例
+// const apiClient = axios.create({
+//   baseURL: 'http://127.0.0.1:5000/api', // 后端 API 的基础 URL
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+// });
+
+// // 封装 RSS API 调用
+// export const fetchFeeds = () => {
+//   return apiClient.get('/rss');
+// };
+
+// export const createFeed = (feedData) => {
+//   return apiClient.post('/rss', feedData);
+// };
+
+// export const deleteFeed = (rssId) => {
+//   return apiClient.delete(`/rss/${rssId}`);
+// };
+
+// export const updateFeed = (rssId, updateData) => {
+//   return apiClient.patch(`/rss/${rssId}`, updateData);
+// };
+
+// export const updateSingleFeed = (rssId) => {
+//   return apiClient.post(`/rss/${rssId}/update`);
+// };
+
+// export const updateAllFeeds = (rssIdList) => {
+//   const requests = rssIdList.map((rssId) => {
+//     return updateSingleFeed(rssId);
+//   });
+//   return Promise.all(requests);
+// };
+
+
+// // 封装 magnet API 调用
+// export const fetchmagnets = () => {
+//   return apiClient.get('/magnets');
+// };
+
+// export const deletemagnet = (magnetId) => {
+//   return apiClient.delete(`/magnets/${magnetId}`);
+// };
+
+// // 重试任务
+// export const retrymagnet = (savePath, urls) => {
+//   return apiClient.post('/magnets/retry', {
+//     save_path: savePath,
+//     urls: urls,
+//   });
+// };
+
+// // 导出 axios 实例以供组件直接使用
+// export default apiClient;
+  

@@ -9,9 +9,9 @@ from backend.database.database import engine
 from backend.services import rss_service, magnet_service, MagnetQueueManager, MagnetMonitor, AlistService
 from backend.services.alist_api import AlistClient, AlistTaskManager, DirectoryManager
 
-from backend.core.config import base_url, token
+from backend.core.config import base_url, token, delete_policy, root_save_path, timeout
 from backend.views import rss_blueprint, magnet_blueprint, log_blueprint, auth_blueprint
-from backend.utils.dependency_manager import DependencyManager
+from backend.utils.dependency_manager import DependencyManager, DependencyKeys as DKeys
 from backend.utils.token_required_middleware import token_required_middleware
 # from backend.utils.file_lock import FileLock
 
@@ -22,26 +22,22 @@ def create_app():
     alist_client = AlistClient(base_url=base_url, token=token)
     alist_task_manager = AlistTaskManager(client=alist_client)
     directory_manager = DirectoryManager(client=alist_client)
-    alist_service = AlistService(task_manager=alist_task_manager, directory_manager=directory_manager)
-    magnet_queue_manager = MagnetQueueManager(alist_service)
-    magnet_monitor = MagnetMonitor(task_manager=alist_task_manager)
+    alist_service = AlistService(delete_policy=delete_policy, root_save_path=root_save_path)
+    magnet_queue_manager = MagnetQueueManager()
+    magnet_monitor = MagnetMonitor(timeout=timeout)
 
     # 初始化依赖注入管理器
     dependency_manager = DependencyManager()
     # 注册实例到管理器
-    dependency_manager.register('MagnetMonitor', magnet_monitor)
-    dependency_manager.register('MagnetQueueManager', magnet_queue_manager)
+    dependency_manager.register(DKeys.ALIST_CLIENT, alist_client)
+    dependency_manager.register(DKeys.ALIST_SERVICE, alist_service)
+    dependency_manager.register(DKeys.ALIST_TASK_MANAGER, alist_task_manager)
+    dependency_manager.register(DKeys.DIRECTORY_MANAGER, directory_manager)
+    dependency_manager.register(DKeys.MAGNET_QUEUE_MANAGER, magnet_queue_manager)
+    dependency_manager.register(DKeys.MAGNET_MONITOR, magnet_monitor)
 
     # 延迟注入依赖关系
     dependency_manager.inject_dependencies()
-    
-    # 将实例存入 app 的配置中
-    app.config['ALIST_CLIENT'] = alist_client
-    app.config['ALIST_TASK_MANAGER'] = alist_task_manager
-    app.config['DIRECTORY_MANAGER'] = directory_manager
-    app.config['ALIST_SERVICE'] = alist_service
-    app.config['MAGNET_QUEUE_MANAGER'] = magnet_queue_manager
-    app.config['MAGNET_MONITOR'] = magnet_monitor
 
     CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 

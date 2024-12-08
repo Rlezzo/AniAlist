@@ -1,7 +1,6 @@
-from flask import Blueprint, request, jsonify, current_app
 from sqlalchemy.exc import SQLAlchemyError
 from backend.services import magnet_service
-from backend.database.models import Magnet
+from flask import Blueprint, request, jsonify, current_app
 
 magnet_blueprint = Blueprint('magnet', __name__)
 

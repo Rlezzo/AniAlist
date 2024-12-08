@@ -1,9 +1,8 @@
 # alist_task.py
-from .task_constants import TaskStatus
-from dataclasses import dataclass
 from typing import Optional
-from loguru import logger
-
+from dataclasses import dataclass
+from .task_constants import TaskStatus
+from backend.utils.logging_config import loguru_logger as logger
 
 @dataclass
 class AlistTask:

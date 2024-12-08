@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from backend.database.models import Magnet
 from backend.database.database import async_session
+from backend.utils.logging_config import loguru_logger as logger
 
 async def get_all_magnets():
     async with async_session() as session:
@@ -75,9 +76,9 @@ async def save_magnets_to_db(torrents):
                     )
                     session.add(new_magnet)
             await session.commit()
-            print("所有任务已成功保存到数据库。")
+            logger.debug("所有任务已成功保存到数据库。")
         except SQLAlchemyError as e:
-            print(f"数据库操作失败: {e}")
+            logger.error(f"数据库操作失败: {e}")
             await session.rollback()
 
 async def get_pending_magnets():
@@ -90,5 +91,5 @@ async def get_pending_magnets():
             magnets = result.scalars().all()
             return magnets
         except Exception as e:
-            print(f"从数据库加载任务时出错: {e}")
+            logger.error(f"从数据库加载任务时出错: {e}")
             return []

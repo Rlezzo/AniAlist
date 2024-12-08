@@ -1,5 +1,5 @@
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 # 配置数据库连接，使用异步 SQLite
 DATABASE_URL = "sqlite+aiosqlite:///backend/database/rss_magnet.db"
@@ -7,7 +7,7 @@ DATABASE_URL = "sqlite+aiosqlite:///backend/database/rss_magnet.db"
 # 创建异步引擎
 engine = create_async_engine(
     DATABASE_URL,
-    echo=True,  # 是否打印SQL日志
+    echo=False,  # 是否打印SQL日志
     future=True
 )
 

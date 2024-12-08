@@ -1,13 +1,8 @@
 import aiohttp
-import feedparser
 import asyncio
-from backend.core.config import BLOCKED_WORDS
-
-# 设置代理
-PROXIES = {
-    "http": "http://host.docker.internal:7897",
-    "https": "http://host.docker.internal:7897"
-}
+import feedparser
+from backend.core.config import BLOCKED_WORDS, PROXIES
+from backend.utils.logging_config import loguru_logger as logger
 
 async def parse_rss_feed(feed_url, rss_feed_id, proxy=None):
     """
@@ -35,7 +30,7 @@ async def parse_rss_feed(feed_url, rss_feed_id, proxy=None):
                     for word in BLOCKED_WORDS:
                         if word.lower() in title_lower:
                             blocked = True
-                            print(f"{entry}条目 '{title}' 包含屏蔽词 '{word}'，跳过。")
+                            logger.debug(f"{entry}条目 '{title}' 包含屏蔽词 '{word}'，跳过。")
                             break
                     if blocked:
                         continue  # 跳过包含屏蔽词的条目
@@ -58,10 +53,10 @@ async def parse_rss_feed(feed_url, rss_feed_id, proxy=None):
                 return torrents
 
     except Exception as e:
-        print(f"解析 RSSFeed '{feed_url}' 失败: {e}")
+        logger.error(f"解析 RSSFeed '{feed_url}' 失败: {e}")
         # 尝试使用代理重新解析
         if not proxy:
-            print(f"尝试使用代理重新解析 RSSFeed '{feed_url}'")
+            logger.warning(f"尝试使用代理重新解析 RSSFeed '{feed_url}'")
             return await parse_rss_feed(feed_url, rss_feed_id, proxy=PROXIES.get("http"))
         return []
 

@@ -1,5 +1,6 @@
 import asyncio
 from typing import Generic, TypeVar
+from backend.utils.logging_config import loguru_logger as logger
 
 T = TypeVar('T')
 
@@ -20,9 +21,9 @@ class UniqueMagnetQueue(Generic[T]):
             if item_id not in self.item_ids:
                 await self.queue.put(item)
                 self.item_ids.add(item_id)
-                print(f"Item {item_id} added to the queue.")
+                logger.debug(f"Item {item_id} added to the queue.")
             else:
-                print(f"Item {item_id} is already in the queue.")
+                logger.debug(f"Item {item_id} is already in the queue.")
 
     async def get(self) -> T:
         """从队列中取出一个元素"""
@@ -47,7 +48,7 @@ class UniqueMagnetQueue(Generic[T]):
                         await new_queue.put(current_item)
                 self.queue = new_queue
                 self.item_ids.remove(item_id)
-                print(f"Item {item_id} removed from the queue.")
+                logger.debug(f"Item {item_id} removed from the queue.")
 
     def empty(self) -> bool:
         """检查队列是否为空"""
