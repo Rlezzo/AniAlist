@@ -1,5 +1,8 @@
-from flask import Blueprint, current_app, request, jsonify
-from backend.services import rss_service 
+from flask import Blueprint, request, jsonify
+from backend.services import rss_service
+from backend.core.config import root_save_path
+from backend.utils.logging_config import loguru_logger as logger
+from backend.utils.dependency_manager import dependency_manager, DependencyKeys
 
 rss_blueprint = Blueprint('rss', __name__)
 
@@ -115,8 +118,7 @@ async def rename_rss_feed(rss_id):
         return jsonify({"message": "Old name and new name are the same, no changes needed."}), 200
 
     # 使用 Alist API 更新文件夹名称
-    directory_manager = current_app.config['DIRECTORY_MANAGER']
-    root_save_path = current_app.config['ROOT_SAVE_PATH']
+    directory_manager = dependency_manager.get(DependencyKeys.DIRECTORY_MANAGER)
     try:
         success = await directory_manager.rename_directory(f"{root_save_path}/{old_name}", new_name)
         if not success:

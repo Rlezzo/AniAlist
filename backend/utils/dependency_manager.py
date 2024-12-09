@@ -36,8 +36,10 @@ class DependencyManager:
         else:
             missing_deps = [name for name, instance in dependency_instances.items() if not instance]
             if not target_instance:
-                missing_deps.append(target)
-            logger.error(f"依赖注入失败，缺失依赖：{', '.join(missing_deps)}")
+                missing_deps.append(target.value)  # 如果目标实例缺失，也加入错误报告
+
+            logger.error(f"依赖注入失败，实例 {target.value} 缺少以下依赖：{', '.join(missing_deps)}")
+            raise ValueError(f"依赖注入失败，实例 {target.value} 缺少以下依赖：{', '.join(missing_deps)}")
 
     def inject_dependencies(self):
         """延迟注入依赖关系"""

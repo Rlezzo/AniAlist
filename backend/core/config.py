@@ -19,8 +19,8 @@ token = "alist-391ab7ce-01ba-4f05-b3b9-7e26c8b59a363mdCDmKaQaAiiNMVUriWzKYyzwJQT
 root_save_path = '/123pan/test'
 # 离线任务完成后对于下载资源的操作
 delete_policy = DeletePolicy.DELETE_ALWAYS
-timeout = 90 # 任务超时时间，分钟
-interval_time = 10 # 监视任务完成间隔，秒
+timeout = timedelta(minutes=90)  # 任务超时时间，分钟
+interval_time = timedelta(seconds=10) # 监视任务完成间隔，秒
 
 SECRET_KEY = 'your_super_secret_key'
 
